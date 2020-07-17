@@ -1,0 +1,61 @@
+.stickyNote{
+    border-radius: 10px;
+    width: 300px;
+    height: 300px;
+    background-color: yellow;
+    border: 1px solid black;
+    box-sizing: border-box;
+    position: relative;
+
+    margin: 20px 20px 20px 20px;
+
+    .content{
+        padding: 10px 10px 10px 10px;
+        box-sizing: border-box;
+        position: relative;
+        height: calc(100% - 50px);
+
+        .content-text{
+            all: none;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            background-color: unset;
+            border: none;
+            resize: none;
+            font-family: 'Architects Daughter', cursive;
+            font-size: 1.5em;
+        }
+    }
+
+    .toolBar{
+        position: absolute;
+        display: flex;
+        align-items: center;
+        bottom: 0px;
+        width: 100%;
+        height: 50px;
+        background-color: pink;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+
+        .delete{
+            font-size: x-large;
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            border-radius: 10px;
+            border-top-left-radius: 0px;
+            &:hover{
+                background-color: red;;
+            }
+        }
+
+        .colors{
+            margin-left: auto;
+            margin-right: 20px;
+        }
+    }
+}

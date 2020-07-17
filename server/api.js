@@ -21,6 +21,12 @@ db.on('error', (err) => {
   console.log(err);
 })
 
+/* ----------- MIDDLEWARE ----------- */
+async function simulateNetwork(req, res, next){
+    await new Promise((res, rej) => setTimeout(() => res(), 500));
+    next();
+}
+
 /* ----------- NOTES API ----------- */
 
 // Create Routes for /api
@@ -48,6 +54,7 @@ router.post('/note', (req, res) => {
     res.sendStatus(200);
 })
 
+// Delete a single note
 router.delete('/note/:id', async (req, res) => {
     // Delete specific note
     let note_id = req.params.id;
@@ -56,4 +63,25 @@ router.delete('/note/:id', async (req, res) => {
     res.sendStatus(200);
 })
 
+// Change color of a note
+router.post('/note/:id/changeColor/:color', async (req, res) => {
+    let note_id = req.params.id;
+    let color = req.params.color;
+
+    await Note.updateOne({'_id': new ObjectId(note_id)}, {
+        color: color
+    })
+    res.sendStatus(200);
+})
+
+// Edit note content
+router.post('/note/:id/changeContent', async (req, res) => {
+    let note_id = req.params.id;
+    let content = req.body.content;
+
+    await Note.updateOne({'_id': new ObjectId(note_id)}, {
+        content: content
+    })
+    res.sendStatus(200);
+})
 module.exports = router;

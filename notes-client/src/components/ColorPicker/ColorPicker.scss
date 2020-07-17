@@ -1,0 +1,11 @@
+.colorPicker{
+    display: flex;
+    .color{
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        border-radius: 50%;
+        background-color: red;
+        border: 1px solid black;
+    }
+}
