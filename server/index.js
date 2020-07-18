@@ -14,16 +14,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // HTTPS Redirect for production
-// if (process.env.NODE_ENV !== 'dev') {
-//     app.enable('trust proxy');
-//     app.use((req, res, next) => {
-//         if (req.secure) {
-//             next();
-//         } else {
-//             res.redirect('https://' + req.headers.host + req.url);
-//         }
-//     });
-// }
+if (process.env.NODE_ENV !== 'dev') {
+    app.enable('trust proxy');
+    app.use((req, res, next) => {
+        if (req.secure) {
+            next();
+        } else {
+            res.redirect('https://' + req.headers.host + req.url);
+        }
+    });
+}
 
 // Listen for requests through API
 app.use('/api', api);
@@ -41,6 +41,6 @@ app.get('/*', function(req, res) {
   })
 
 // Start server listening
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
     console.log("Server started on port: 3000");
 });
