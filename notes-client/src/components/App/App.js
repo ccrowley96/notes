@@ -18,8 +18,24 @@ class App extends React.Component {
       // Board not found -- create new board
       this.createBoard();
     } else{
-      let bid = JSON.parse(localStorage.getItem('board')).bid;
-      this.setState({bid});
+      this.readBoardFromLocalStorage();
+    }
+  }
+
+  async readBoardFromLocalStorage(){
+    let bid = JSON.parse(localStorage.getItem('board')).bid;
+    await this.verifyBoard(bid);
+    bid = JSON.parse(localStorage.getItem('board')).bid;
+    this.setState({bid});
+  }
+
+  async verifyBoard(bid){
+    let response = await fetch(`/api/verifyBoard/${bid}`);
+    if(response.status === 200) return;
+    else{
+      // Remove board storage
+      localStorage.removeItem('board');
+      await this.createBoard();
     }
   }
 

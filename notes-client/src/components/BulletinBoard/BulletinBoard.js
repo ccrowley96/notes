@@ -27,7 +27,7 @@ class BulletinBoard extends React.Component{
     }
 
     async handleAddNoteClick(color){
-        await fetch(`/api/board/${this.props.bid}/note`, {
+        let response = await fetch(`/api/board/${this.props.bid}/note`, {
             method: 'POST',
             body: JSON.stringify({
                 content: '',

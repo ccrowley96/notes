@@ -6,12 +6,17 @@ const {Board} = require('./db/db_index');
 const note = require('./note');
 const dotenv = require('dotenv').config();
 
+const secondsUntilExpire = 1000 * 60 * 60 * 24 * 30 * 6; // 6 months in seconds
 
 // Allows you to create object IDs
 var ObjectId = require('mongoose').Types.ObjectId; 
 
 // Connect to database
-mongoose.connect(process.env.MONGO_CONNECT_DEV, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+if(process.env.NODE_ENV === 'dev'){
+    mongoose.connect(process.env.MONGO_CONNECT_DEV, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+} else{
+    mongoose.connect(process.env.MONGO_CONNECT, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+}
 
 const db = mongoose.connection;
 
@@ -41,9 +46,19 @@ router.get('/', (req, res) => {
 // Find board by id and then pass to note API
 router.use('/board/:bid', findBoard, note)
 
+router.get('/verifyBoard/:bid', async (req, res) => {
+    let board = await Board.findOne({'_id': new ObjectId(req.params.bid)})
+    if(board){
+        res.sendStatus(200);
+    } else{
+        res.sendStatus(404);
+    }
+})
+
 // Create a new board
 router.post('/board', async (req, res)=> {
-    let board = new Board();
+    let expireAt = new Date(Date.now() + secondsUntilExpire);
+    let board = new Board({expireAt});
     await board.save();
     res.status(200);
     res.json({_id: board._id});
@@ -53,11 +68,15 @@ async function findBoard(req, res, next){
     // Find board
     let board = await Board.findOne({'_id': new ObjectId(req.params.bid)})
     if(board){
+        // Update expire at time
+        let expireAt = new Date(Date.now() + secondsUntilExpire);
+        // Update expire time
+        await Board.updateOne({"_id": new ObjectId(req.params.bid)}, {expireAt: expireAt});
         // Attach board to request
         req.board = board;
         next();
     } else{
-        res.status(404);
+        res.status(407);
         res.send('Board not found');
         return;
     }
