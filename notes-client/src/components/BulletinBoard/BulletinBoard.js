@@ -2,13 +2,17 @@ import React from 'react';
 import './BulletinBoard.scss';
 
 import StickyNote from '../StickyNote/StickyNote';
+import ColorPicker from '../ColorPicker/ColorPicker';
+
+import utils from "../../utils";
 
 class BulletinBoard extends React.Component{
     constructor(props){
         super(props);
 
         this.state = {
-            notes: null
+            notes: null,
+            newColor: 'yellow'
         }
     }
 
@@ -22,12 +26,12 @@ class BulletinBoard extends React.Component{
         this.setState({notes});
     }
 
-    async handleAddNoteClick(){
+    async handleAddNoteClick(color){
         await fetch('/api/note', {
             method: 'POST',
             body: JSON.stringify({
                 content: '',
-                color: 'yellow'
+                color
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -54,9 +58,17 @@ class BulletinBoard extends React.Component{
             <div className="bulletinBoard">
                { this.renderStickyNotes() }
 
-               <button className="addNote" onClick={() => this.handleAddNoteClick()}>
-                   New Note
-               </button>
+               <div className="addNote"  style={{backgroundColor: utils.colors[this.state.newColor]}}>
+                   <ColorPicker 
+                        customColorCallback={(color) => {
+                            this.setState({newColor: color})
+                            this.handleAddNoteClick(color)
+                    }}
+                   />
+                   <div className="addNoteInfo">
+                       Click Color to Add New Note 
+                   </div>
+               </div>
             </div>
         )
     }

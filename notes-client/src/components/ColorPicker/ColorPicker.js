@@ -13,10 +13,7 @@ export default function colorPicker(props){
                             key={color}
                             className="color" 
                             style={{backgroundColor: utils.colors[color]}}
-                            onClick={async () => {
-                                await handleColorChange(color, props._id)
-                                props.updateNotes();
-                            }}
+                            onClick={() => props.customColorCallback(color)}
                         >
                         </div>
                     )
@@ -24,10 +21,4 @@ export default function colorPicker(props){
             }
         </div>
     )
-}
-
-async function handleColorChange(color, _id){
-    await fetch(`/api/note/${_id}/changeColor/${color}`, {
-        method: 'POST',
-    })
 }

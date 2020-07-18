@@ -25,6 +25,13 @@ class StickyNote extends React.Component{
         this.notifyContentChange(e.target.value);
     }
 
+    async handleColorChange(color){
+        await fetch(`/api/note/${this.props.note._id}/changeColor/${color}`, {
+            method: 'POST',
+        })
+        this.props.updateNotes();
+    }
+
     notifyContentChange(newContent){
         fetch(`/api/note/${this.props.note._id}/changeContent`, {
             method: 'POST',
@@ -49,12 +56,16 @@ class StickyNote extends React.Component{
                         <FiTrash2 />
                     </div>
                     <div className="colors">
-                        <ColorPicker _id={this.props.note._id} updateNotes={() => this.props.updateNotes()}/>
+                        <ColorPicker 
+                            customColorCallback={(color) => this.handleColorChange(color)}   
+                        />
                     </div>
                 </div>
             </div>
         )
     }
 }
+
+
 
 export default StickyNote;
