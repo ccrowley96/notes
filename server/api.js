@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const {Note} = require('./db/db_index');
+const {Note, Board} = require('./db/db_index');
+
+const dotenv = require('dotenv').config();
+
 
 // Allows you to create object IDs
 var ObjectId = require('mongoose').Types.ObjectId; 
 
 // Connect to database
-mongoose.connect('mongodb://127.0.0.1:27017', {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect(process.env.MONGO_CONNECT_DEV, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const db = mongoose.connection;
 
@@ -27,12 +30,20 @@ async function simulateNetwork(req, res, next){
     next();
 }
 
-/* ----------- NOTES API ----------- */
-
 // Create Routes for /api
 router.get('/', (req, res) => {
     res.send('Welcome to the note API');
 })
+
+/* ----------- NOTEBOOK API ----------- */
+router.post('/board', async (req, res)=> {
+    let board = new Board();
+    await board.save();
+    res.status(200);
+    res.json({_id: board._id});
+})
+
+/* ----------- NOTES API ----------- */
 
 router.get('/notes', async (req, res) => {
     // Return all notes
