@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const {Note, Board} = require('./db/db_index');
+const {Board} = require('./db/db_index');
 
+const note = require('./note');
 const dotenv = require('dotenv').config();
 
 
@@ -36,6 +37,11 @@ router.get('/', (req, res) => {
 })
 
 /* ----------- NOTEBOOK API ----------- */
+
+// Find board by id and then pass to note API
+router.use('/board/:bid', findBoard, note)
+
+// Create a new board
 router.post('/board', async (req, res)=> {
     let board = new Board();
     await board.save();
@@ -43,56 +49,18 @@ router.post('/board', async (req, res)=> {
     res.json({_id: board._id});
 })
 
-/* ----------- NOTES API ----------- */
+async function findBoard(req, res, next){
+    // Find board
+    let board = await Board.findOne({'_id': new ObjectId(req.params.bid)})
+    if(board){
+        // Attach board to request
+        req.board = board;
+        next();
+    } else{
+        res.status(404);
+        res.send('Board not found');
+        return;
+    }
+}
 
-router.get('/notes', async (req, res) => {
-    // Return all notes
-    let notes = await Note.find({});
-    res.status(200);
-    res.json(notes)
-})
-
-// Create new note
-router.post('/note', (req, res) => {
-    
-    // Create a new note with req body
-    let note = new Note({
-        content: req.body.content,
-        color: req.body.color
-    })
-
-    note.save();
-    res.sendStatus(200);
-})
-
-// Delete a single note
-router.delete('/note/:id', async (req, res) => {
-    // Delete specific note
-    let note_id = req.params.id;
-    await Note.deleteOne({'_id': new ObjectId(note_id)})
-
-    res.sendStatus(200);
-})
-
-// Change color of a note
-router.post('/note/:id/changeColor/:color', async (req, res) => {
-    let note_id = req.params.id;
-    let color = req.params.color;
-
-    await Note.updateOne({'_id': new ObjectId(note_id)}, {
-        color: color
-    })
-    res.sendStatus(200);
-})
-
-// Edit note content
-router.post('/note/:id/changeContent', async (req, res) => {
-    let note_id = req.params.id;
-    let content = req.body.content;
-
-    await Note.updateOne({'_id': new ObjectId(note_id)}, {
-        content: content
-    })
-    res.sendStatus(200);
-})
 module.exports = router;

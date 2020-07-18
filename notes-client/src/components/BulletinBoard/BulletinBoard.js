@@ -21,13 +21,13 @@ class BulletinBoard extends React.Component{
     }
 
     async updateNotes(){
-        let response = await fetch('/api/notes');
+        let response = await fetch(`/api/board/${this.props.bid}/notes`);
         let notes = await response.json();
         this.setState({notes});
     }
 
     async handleAddNoteClick(color){
-        await fetch('/api/note', {
+        await fetch(`/api/board/${this.props.bid}/note`, {
             method: 'POST',
             body: JSON.stringify({
                 content: '',
@@ -44,6 +44,7 @@ class BulletinBoard extends React.Component{
         return this.state.notes.map(note => {
             return (
                 <StickyNote
+                    bid={this.props.bid}
                     key={note._id} 
                     note={note}
                     updateNotes={() => this.updateNotes()}

@@ -16,7 +16,7 @@ class StickyNote extends React.Component{
     }
 
     async handleDeleteClick(){
-        await fetch(`/api/note/${this.props.note._id}`, {method: 'DELETE'});
+        await fetch(`/api/board/${this.props.bid}/note/${this.props.note._id}`, {method: 'DELETE'});
         this.props.updateNotes();
     }
 
@@ -26,14 +26,14 @@ class StickyNote extends React.Component{
     }
 
     async handleColorChange(color){
-        await fetch(`/api/note/${this.props.note._id}/changeColor/${color}`, {
+        await fetch(`/api/board/${this.props.bid}/note/${this.props.note._id}/changeColor/${color}`, {
             method: 'POST',
         })
         this.props.updateNotes();
     }
 
     notifyContentChange(newContent){
-        fetch(`/api/note/${this.props.note._id}/changeContent`, {
+        fetch(`/api/board/${this.props.bid}/note/${this.props.note._id}/changeContent`, {
             method: 'POST',
             body: JSON.stringify({
                 content: newContent
