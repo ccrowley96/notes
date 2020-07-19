@@ -21,13 +21,13 @@ class BulletinBoard extends React.Component{
     }
 
     async updateNotes(){
-        let response = await fetch(`/api/board/${this.props.bid}/notes`);
+        let response = await fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/board/${this.props.bid}/notes`);
         let notes = await response.json();
         this.setState({notes});
     }
 
     async handleAddNoteClick(color){
-        let response = await fetch(`/api/board/${this.props.bid}/note`, {
+        let response = await fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/board/${this.props.bid}/note`, {
             method: 'POST',
             body: JSON.stringify({
                 content: '',

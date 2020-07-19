@@ -30,7 +30,7 @@ class App extends React.Component {
   }
 
   async verifyBoard(bid){
-    let response = await fetch(`/api/verifyBoard/${bid}`);
+    let response = await fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/verifyBoard/${bid}`);
     if(response.status === 200) return;
     else{
       // Remove board storage
@@ -40,7 +40,7 @@ class App extends React.Component {
   }
 
   async createBoard(){
-    let response = await fetch('/api/board', {method: 'POST'});
+    let response = await fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/board`, {method: 'POST'});
     let board = await response.json();
     localStorage.setItem('board', JSON.stringify({bid: board._id}));
     this.setState({bid: board._id})

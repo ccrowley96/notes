@@ -15,8 +15,12 @@ class StickyNote extends React.Component{
         }
     }
 
+    componentDidMount(){
+        this.setState({randomHueRotation: this.randomColorRotation()});
+    }
+
     async handleDeleteClick(){
-        let response = await fetch(`/api/board/${this.props.bid}/note/${this.props.note._id}`, {method: 'DELETE'});
+        await fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/board/${this.props.bid}/note/${this.props.note._id}`, {method: 'DELETE'});
         this.props.updateNotes();
     }
 
@@ -26,14 +30,14 @@ class StickyNote extends React.Component{
     }
 
     async handleColorChange(color){
-        let response = await fetch(`/api/board/${this.props.bid}/note/${this.props.note._id}/changeColor/${color}`, {
+        await fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/board/${this.props.bid}/note/${this.props.note._id}/changeColor/${color}`, {
             method: 'POST',
         })
         this.props.updateNotes();
     }
 
     notifyContentChange(newContent){
-        let response = fetch(`/api/board/${this.props.bid}/note/${this.props.note._id}/changeContent`, {
+        fetch(`${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''}/api/board/${this.props.bid}/note/${this.props.note._id}/changeContent`, {
             method: 'POST',
             body: JSON.stringify({
                 content: newContent
@@ -44,9 +48,18 @@ class StickyNote extends React.Component{
         })
     }
 
+    randomColorRotation(){
+        let degrees = ['0', '45', '90', '135', '180', '225', '270', '315'];
+        let rand = Math.floor(Math.random() * degrees.length);
+        return `hue-rotate(${degrees[rand]}deg)`
+    }
+
     render(){
         return(
             <div className="stickyNote" style={{backgroundColor: utils.colors[this.props.note.color]}}>
+                <div className="pin">
+                    <img className="pinImg" src="/img/pin.png" style={{filter: this.state.randomHueRotation}}></img>
+                </div>
                 <div className="content">
                     <textarea className="content-text" value={this.state.content} onChange={(e) => this.handleContentChange(e)}>
                     </textarea>

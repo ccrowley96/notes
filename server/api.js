@@ -6,7 +6,7 @@ const {Board} = require('./db/db_index');
 const note = require('./note');
 const dotenv = require('dotenv').config();
 
-const secondsUntilExpire = 1000 * 60 * 60 * 24 * 30 * 6; // 6 months in seconds
+const msecUntilExpire = 1000 * 60 * 60 * 24 * 30 * 6; // 6 months in msecs
 
 // Allows you to create object IDs
 var ObjectId = require('mongoose').Types.ObjectId; 
@@ -57,7 +57,7 @@ router.get('/verifyBoard/:bid', async (req, res) => {
 
 // Create a new board
 router.post('/board', async (req, res)=> {
-    let expireAt = new Date(Date.now() + secondsUntilExpire);
+    let expireAt = new Date(Date.now() + msecUntilExpire);
     let board = new Board({expireAt});
     await board.save();
     res.status(200);
@@ -69,7 +69,7 @@ async function findBoard(req, res, next){
     let board = await Board.findOne({'_id': new ObjectId(req.params.bid)})
     if(board){
         // Update expire at time
-        let expireAt = new Date(Date.now() + secondsUntilExpire);
+        let expireAt = new Date(Date.now() + msecUntilExpire);
         // Update expire time
         await Board.updateOne({"_id": new ObjectId(req.params.bid)}, {expireAt: expireAt});
         // Attach board to request
